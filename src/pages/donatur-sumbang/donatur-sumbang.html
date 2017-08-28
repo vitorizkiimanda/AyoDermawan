@@ -1,0 +1,143 @@
+<ion-header>
+  <ion-toolbar no-border-top color="AyoDermawan" class="Toolbar">
+    <ion-segment  [(ngModel)]="sumbang">
+      <ion-segment-button color="light" value="uang">
+        <div class="Header">Uang</div>
+      </ion-segment-button>
+      <ion-segment-button value="barang">
+        <div class="Header">Barang</div>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <div [ngSwitch]="sumbang">
+    <ion-list *ngSwitchCase="'uang'">
+      
+      <img src="assets/pict/Uang.png" class='Logo'>
+
+      <ion-item class="Konten1">
+				<ion-label floating><p class="Head">Nama</p></ion-label>
+				<ion-input class="Head2" [(ngModel)]="name" name="name" type="text" #nama="ngModel" spellcheck="false" autocapitalize="off"
+					required>
+				</ion-input>
+			</ion-item>
+			
+			<!--<p class="Warning" ion-text [hidden]="nama.valid || submitted == false" color="danger" padding-left>
+				Nama harus diisi
+			</p>-->
+
+      <ion-item>
+        <ion-label><p class="Head">Lembaga</p></ion-label>
+        <ion-select [(ngModel)]="Lembaga" class="Head2">
+          <ion-option value="1">Lembaga1</ion-option>
+          <ion-option value="2">Lembaga2</ion-option>
+          <ion-option value="3">Lembaga3</ion-option>
+          <ion-option value="4">Lembaga4</ion-option>
+          <ion-option value="5">Lembaga5</ion-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item no-lines>
+        <button class='Button' color="AyoDermawan" ion-button block (click)='OpenItemUang()'><p class="ButtonWord">Lanjut</p></button>
+      </ion-item>
+
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'barang'">
+      
+      <img src="assets/pict/Barang.png" class='Logo'>
+
+      <ion-item class="Konten1">
+				<ion-label floating><p class="Head">Nama</p></ion-label>
+				<ion-input class="Head2" [(ngModel)]="name" name="name" type="text" #nama="ngModel" spellcheck="false" autocapitalize="off"
+					required>
+				</ion-input>
+			</ion-item>
+			
+			<!--<p class="Warning" ion-text [hidden]="nama.valid || submitted == false" color="danger" padding-left>
+				Nama harus diisi
+			</p>-->
+
+      <ion-item>
+        <ion-label><p class="Head">Kategori</p></ion-label>
+        <ion-select [(ngModel)]="Kategori" class="Head2">
+          <ion-option value="1">Kategori1</ion-option>
+          <ion-option value="2">Kategori2</ion-option>
+          <ion-option value="3">Kategori3</ion-option>
+          <ion-option value="4">Kategori4</ion-option>
+          <ion-option value="5">Kategori5</ion-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label><p class="Head">Lembaga</p></ion-label>
+        <ion-select [(ngModel)]="Lembaga" class="Head2">
+          <ion-option value="1">Lembaga1</ion-option>
+          <ion-option value="2">Lembaga2</ion-option>
+          <ion-option value="3">Lembaga3</ion-option>
+          <ion-option value="4">Lembaga4</ion-option>
+          <ion-option value="5">Lembaga5</ion-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item no-lines>
+        <ion-label><p class="Head">Alamat</p></ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label><p class="Head21">Provinsi</p></ion-label>
+        <ion-select [(ngModel)]="Provinsi" class="Head2">
+          <ion-option value="1">Provinsi1</ion-option>
+          <ion-option value="2">Provinsi2</ion-option>
+          <ion-option value="3">Provinsi3</ion-option>
+          <ion-option value="4">Provinsi4</ion-option>
+          <ion-option value="5">Provinsi5</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label><p class="Head21">Kota/Kab</p></ion-label>
+        <ion-select [(ngModel)]="Kota/Kab" class="Head2">
+          <ion-option value="1">Kota/Kab1</ion-option>
+          <ion-option value="2">Kota/Kab2</ion-option>
+          <ion-option value="3">Kota/Kab3</ion-option>
+          <ion-option value="4">Kota/Kab4</ion-option>
+          <ion-option value="5">Kota/Kab5</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label><p class="Head21">Kecamatan</p></ion-label>
+        <ion-select [(ngModel)]="Kecamatan" class="Head2">
+          <ion-option value="1">Kecamatan1</ion-option>
+          <ion-option value="2">Kecamatan2</ion-option>
+          <ion-option value="3">Kecamatan3</ion-option>
+          <ion-option value="4">Kecamatan4</ion-option>
+          <ion-option value="5">Kecamatan5</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+      <ion-textarea class="Head3"  [(ngModel)]="address" name="address" type="text" #alamat="ngModel" placeholder="Alamat Pengambilan Barang" required autosize>
+      </ion-textarea>
+      </ion-item>
+      
+      <ion-item class="Konten1">
+        
+				<ion-label stacked><p class="Head">Deskripsi Barang</p></ion-label>
+				<ion-textarea class="Head2" [(ngModel)]="description" name="description" type="text" #deskripsi="ngModel" placeholder="Berikan Deskripsi barang yang akan didonasikan" spellcheck="false" autocapitalize="off"
+					autosize text-wrap required>
+				</ion-textarea>
+			
+
+      <!--<ion-label stack class="Head">Deskripsi Barang</ion-label>
+				<ion-textarea class="Head2"  [(ngModel)]="description" name="description" type="text" #deskripsi="ngModel" required autosize>
+      </ion-textarea>-->
+			</ion-item>
+
+      <ion-item no-lines>
+        <button class='Button' color="AyoDermawan" ion-button outline block (click)='UploadFoto()'><p class="ButtonWordBlue">Unggah Foto</p></button>
+        <button class='Button' color="AyoDermawan" ion-button block (click)='OpenItemBarang()'><p class="ButtonWord">Lanjut</p></button>
+      </ion-item>
+
+    </ion-list>
+  </div>
+</ion-content>

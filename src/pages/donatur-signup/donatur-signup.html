@@ -50,9 +50,9 @@
 				</ion-input>
 
 			</ion-item>
-			<!--<p ion-text [hidden]="submitted2 == true" color="danger" padding-left>
+			<p class="Warning" ion-text [hidden]="submitted2 == true" color="danger" padding-left>
 				Password salah
-			</p>-->
+			</p>
 			<div ion-text [hidden]="password2==password"  padding-left>
 				<p class="Warning" color="danger" *ngIf="password2!=null">Password salah</p>
 			</div>
@@ -78,7 +78,7 @@
 
 		<ion-row responsive-sm>
 			<ion-col>
-				<button class="Button" ion-button block (click)="signUp()" type="submit"><p class="ButtonWord">Daftar</p></button>
+				<button class="Button" color="AyoDermawan" ion-button block (click)="signUp(signupForm)" type="submit"><p class="ButtonWord">Daftar</p></button>
 			</ion-col>
 		</ion-row>
 

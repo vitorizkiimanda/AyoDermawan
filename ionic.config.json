@@ -2,5 +2,7 @@
   "name": "AyoDermawan",
   "app_id": "93d74683",
   "type": "ionic-angular",
-  "integrations": {}
+  "integrations": {
+    "cordova": {}
+  }
 }

@@ -14,6 +14,10 @@ import { DonaturBarangPage } from '../donatur-barang/donatur-barang';
 
 export class DonaturSumbangPage {
 
+  validLembaga = false;
+
+  choose_lembaga = false;
+  submitted = false;
   sumbang: string = "barang";
 
   constructor(
@@ -33,9 +37,47 @@ export class DonaturSumbangPage {
     modal.present();
   }
 
-  OpenItemUang() {
-    // untuk push page dengan tabs dihide
-    this.app.getRootNav().push(DonaturUangPage);
+  cekLembaga(){
+
+    this.validLembaga = true;
+ 
+ }
+
+  // OpenItemUang() {
+  //   // untuk push page dengan tabs dihide
+  //   this.app.getRootNav().push(DonaturUangPage);
+  // }
+
+  OpenItemUang(form: NgForm) {
+
+    this.submitted = true;
+
+    let loading = this.loadCtrl.create({
+        content: 'memuat..'
+    });
+
+    if(form.valid && this.validLembaga){
+
+      loading.present();
+
+      // untuk push page dengan tabs dihide
+      this.app.getRootNav().push(DonaturUangPage);
+
+      loading.dismiss();
+
+    }
+    else{
+
+      let alert = this.alertCtrl.create({
+                title: 'Lengkapi Data',
+                // subTitle: 'Email atau Password salah',      
+                buttons: ['OK']
+              });
+              // this.vibration.vibrate(1000);
+              alert.present();
+
+    }
+
   }
 
   OpenItemBarang() {
@@ -47,7 +89,8 @@ export class DonaturSumbangPage {
 }
 
 @Component({
-  template: `
+  template: 
+  `
 <ion-header>
 
   <ion-navbar color="AyoDermawan">

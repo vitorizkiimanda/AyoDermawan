@@ -5,7 +5,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DonaturLoginPage } from '../donatur-login/donatur-login';
 import { LembagaLoginPage } from '../lembaga-login/lembaga-login';
 
-@IonicPage()
+// @IonicPage()
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',

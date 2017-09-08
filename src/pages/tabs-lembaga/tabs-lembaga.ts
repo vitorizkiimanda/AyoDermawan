@@ -5,7 +5,7 @@ import { LembagaLelangPage } from '../lembaga-lelang/lembaga-lelang';
 import { LembagaNotifikasiPage } from '../lembaga-notifikasi/lembaga-notifikasi';
 import { LembagaProfilPage } from '../lembaga-profil/lembaga-profil';
 
-@IonicPage()
+// @IonicPage()
 @Component({
   selector: 'page-tabs-lembaga',
   templateUrl: 'tabs-lembaga.html',

@@ -4,8 +4,11 @@ import { NgForm } from '@angular/forms';
 // import { Vibration } from '@ionic-native/vibration';
 
 import { TabsDonaturPage } from '../tabs-donatur/tabs-donatur';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireDatabase, FirebaseObjectObservable } from 'angularfire2/database';
 
-@IonicPage()
+
+// @IonicPage()
 @Component({
   selector: 'page-donatur-signup',
   templateUrl: 'donatur-signup.html',
@@ -25,7 +28,13 @@ export class DonaturSignupPage {
 
   isValidFormTelephone= true;
 
+  donatur: FirebaseObjectObservable<any[]>;
+  
+
   constructor(
+    //firebase
+    private fireauth: AngularFireAuth,
+    private firedata: AngularFireDatabase,
     // private vibration: Vibration,
     public navCtrl: NavController, 
     // public http: Http, 
@@ -62,7 +71,20 @@ export class DonaturSignupPage {
 
       loading.present();
 
-      this.navCtrl.setRoot(TabsDonaturPage);
+      //firebase
+      this.fireauth.auth.createUserWithEmailAndPassword(this.email, this.password)
+      .then(data => {
+        //this.donatur = this.firedata.object('donatur/${data.uid}');
+        const donatur = this.firedata.object('/donatur/'+ data.uid);
+        donatur.set({id:data.uid, name: this.name, email: this.email, telephone: this.telephone, address: this.address});
+    
+        console.log(data);  
+        this.navCtrl.setRoot(TabsDonaturPage);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
 
       loading.dismiss();
 

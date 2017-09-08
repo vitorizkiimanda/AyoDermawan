@@ -4,23 +4,38 @@ import { NgForm } from '@angular/forms';
 
 import { TabsDonaturPage } from '../tabs-donatur/tabs-donatur';
 import { DonaturSignupPage } from '../donatur-signup/donatur-signup';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireDatabase, FirebaseObjectObservable } from 'angularfire2/database';
 
-@IonicPage()
+import { Data } from '../../providers/data';
+import { Http } from '@angular/http';
+
+
+// @IonicPage()
 @Component({
   selector: 'page-donatur-login',
   templateUrl: 'donatur-login.html',
 })
 export class DonaturLoginPage {
 
+  tabs: number;
+
   submitted = false;
   status:string;
   lihat = true;
+  email: string;
+  password: string;
+  
 
   constructor(
+    private fireauth: AngularFireAuth,
+    private firedata: AngularFireDatabase,
     public navCtrl: NavController, 
     public navParams: NavParams,
     public loadCtrl: LoadingController,
-    public alertCtrl: AlertController) {
+    public alertCtrl: AlertController,
+    
+    public data: Data) {
   }
 
   ionViewDidLoad() {
@@ -38,11 +53,36 @@ export class DonaturLoginPage {
 
     if(form.valid){
 
+      
+
       loading.present();
 
-      this.navCtrl.setRoot(TabsDonaturPage);
+      //firebase
+      this.fireauth.auth.signInWithEmailAndPassword(this.email, this.password)
+      .then( user => {
+        this.firedata.object('/donatur/'+user.uid).subscribe(data =>{
+          console.log(data);
+          this.data.login(data,"donatur");//ke lokal
+      });
+          setTimeout(() => {
+            loading.dismiss();
+            this.navCtrl.setRoot(TabsDonaturPage, 2);
+          }, 1000);
+          
+      })
+      .catch( error => {
+        console.error(error);      
+        let alert = this.alertCtrl.create({
+          title: 'Gagal Masuk',
+          subTitle: 'Silahkan coba lagi. Cek kembali Email dan Password',      
+          buttons: ['OK']
+        });
+        // this.vibration.vibrate(1000);
+        alert.present();
+        loading.dismiss();
+      })
 
-      loading.dismiss();
+      
 
     }
     else{

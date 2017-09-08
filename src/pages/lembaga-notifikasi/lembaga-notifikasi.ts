@@ -5,7 +5,7 @@ import { LembagaDonasiPage } from '../lembaga-donasi/lembaga-donasi';
 import { LembagaRiwayatPage } from '../lembaga-riwayat/lembaga-riwayat';
 
 
-@IonicPage()
+// @IonicPage()
 @Component({
   selector: 'page-lembaga-notifikasi',
   templateUrl: 'lembaga-notifikasi.html',

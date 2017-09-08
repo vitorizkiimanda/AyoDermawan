@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams, App } from 'ionic-angular';
 
 import { DonaturList2Page } from '../donatur-list2/donatur-list2';
 
-@IonicPage()
+// @IonicPage()
 @Component({
   selector: 'page-donatur-list',
   templateUrl: 'donatur-list.html',

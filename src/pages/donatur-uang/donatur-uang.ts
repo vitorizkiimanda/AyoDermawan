@@ -1,21 +1,31 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 
-/**
- * Generated class for the DonaturUangPage page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
+import { TabsDonaturPage } from '../tabs-donatur/tabs-donatur';
 
-@IonicPage()
+// @IonicPage()
 @Component({
   selector: 'page-donatur-uang',
   templateUrl: 'donatur-uang.html',
 })
 export class DonaturUangPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  donation: string;  
+  lembaga_uang: string;
+
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams,
+    public loadCtrl: LoadingController,
+    public alertCtrl: AlertController,) {
+
+    let dataDonasi = JSON.parse(this.navParams.data);
+
+    this.donation = dataDonasi.donation;
+    this.lembaga_uang = dataDonasi.lembaga_uang;
+
+    console.log(this.lembaga_uang);
+
   }
 
   ionViewDidLoad() {
@@ -27,7 +37,27 @@ export class DonaturUangPage {
   }
 
   Finish() {
-    this.navCtrl.pop();
+    
+    let alert = this.alertCtrl.create({
+          title: 'Transaksi Berhasil',
+          buttons: ['OK']
+    });
+
+    let loading = this.loadCtrl.create({
+        content: 'memuat..'
+    });
+    loading.present();
+
+    //tempat firebase
+
+    //
+
+    setTimeout(() => {
+      loading.dismiss();
+      this.navCtrl.setRoot(TabsDonaturPage, 2);
+      alert.present();
+    }, 1000);
+
   }
 
 }

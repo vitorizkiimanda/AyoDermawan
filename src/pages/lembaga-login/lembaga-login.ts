@@ -5,7 +5,7 @@ import { NgForm } from '@angular/forms';
 import { TabsLembagaPage } from '../tabs-lembaga/tabs-lembaga';
 import { LembagaSignupPage } from '../lembaga-signup/lembaga-signup';
 
-@IonicPage()
+// @IonicPage()
 @Component({
   selector: 'page-lembaga-login',
   templateUrl: 'lembaga-login.html',

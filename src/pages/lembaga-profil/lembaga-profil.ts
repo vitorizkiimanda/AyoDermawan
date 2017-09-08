@@ -4,7 +4,7 @@ import { IonicPage, NavController, NavParams, AlertController, App } from 'ionic
 import { LembagaProfilEditPage } from '../lembaga-profil-edit/lembaga-profil-edit';
 import { MyApp } from '../../app/app.component';
 
-@IonicPage()
+// @IonicPage()
 @Component({
   selector: 'page-lembaga-profil',
   templateUrl: 'lembaga-profil.html',

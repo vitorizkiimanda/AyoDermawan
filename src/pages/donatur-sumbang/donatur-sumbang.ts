@@ -6,6 +6,12 @@ import { NgForm } from '@angular/forms';
 import { DonaturUangPage } from '../donatur-uang/donatur-uang';
 import { DonaturBarangPage } from '../donatur-barang/donatur-barang';
 
+import { Data } from '../../providers/data';
+import { Http } from '@angular/http';
+
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
+
 
 @Component({
   selector: 'page-donatur-sumbang',
@@ -13,33 +19,93 @@ import { DonaturBarangPage } from '../donatur-barang/donatur-barang';
 })
 
 export class DonaturSumbangPage {
+  swipe: number = 1;
+  sumbang: string = "barang";
 
-  validLembaga = false;
+  validLembagaUang = false;
+
+  validLembagaBarang = false;
+  validKategori = false;
+  validProvinsi = false;
+  validKota = false;
+  validKecamatan = false;
 
   choose_lembaga = false;
   submitted = false;
-  sumbang: string = "barang";
 
+  id_donatur: string;
+
+  //uang
+  donation: number;  
+  lembaga_uang: string;
+ 
+  //barang
+  name: string;
+  kategori: string;
+  lembaga_barang: string;
+  provinsi: string;
+  kota: string;
+  kecamatan: string;
+  address: string;
+  description: string;
+  
   constructor(
+    private fireauth: AngularFireAuth,
+    private firedata: AngularFireDatabase,
     // private vibration: Vibration,
     public navCtrl: NavController, 
-    // public http: Http, 
+    public http: Http, 
     public alertCtrl: AlertController, 
     public navParams: NavParams, 
-    // public data: Data,
+    public data: Data,
     public loadCtrl: LoadingController,
     public app: App,
     public modalCtrl: ModalController) {
+
+      this.data.getDataDonatur().then((data) => {
+      this.id_donatur = data.id;
+    })
+
   }
+
+  ionViewDidLoad() {
+    //ini ni ngambil value yang di return dari data.ts
+    
+  }
+  tapEvent1(e) {
+    console.log("11111111");
+    console.log(this.swipe);
+    console.log(this.sumbang);
+    this.swipe = 2;
+  }
+
+  tapEvent2(e) {
+    console.log("222222222");
+    console.log(this.swipe);
+    console.log(this.sumbang);
+    this.swipe = 1;
+  }
+
+  swipeEvent(e) {
+    console.log(this.swipe);
+    this.swipe++
+    if(this.swipe%2 == 0){
+      this.sumbang = "uang";
+    }
+    else {
+      this.sumbang = "barang";
+    }
+  }
+
 
   UploadFoto() {
     let modal = this.modalCtrl.create(ModalContentPage);
     modal.present();
   }
 
-  cekLembaga(){
+  cekLembagaUang(){
 
-    this.validLembaga = true;
+    this.validLembagaUang = true;
  
  }
 
@@ -56,12 +122,22 @@ export class DonaturSumbangPage {
         content: 'memuat..'
     });
 
-    if(form.valid && this.validLembaga){
+    if(form.valid && this.validLembagaUang){
 
+      let input = JSON.stringify({
+        donation:this.donation,
+        lembaga_uang:this.lembaga_uang,
+        });
+
+      this.firedata.list('/uang/'+ this.id_donatur).push({ 
+        donation: this.donation, 
+        lembaga_uang: this.lembaga_uang 
+      });
+        
       loading.present();
 
       // untuk push page dengan tabs dihide
-      this.app.getRootNav().push(DonaturUangPage);
+      this.app.getRootNav().push(DonaturUangPage, input);
 
       loading.dismiss();
 
@@ -80,10 +156,88 @@ export class DonaturSumbangPage {
 
   }
 
-  OpenItemBarang() {
-    // untuk push page dengan tabs dihide
-    this.app.getRootNav().push(DonaturBarangPage);
+
+  OpenItemBarang(form: NgForm) {
+
+    this.submitted = true;
+
+    let loading = this.loadCtrl.create({
+        content: 'memuat..'
+    });
+
+    if(form.valid && this.validKategori && this.validLembagaBarang && this.validProvinsi && this.validKota && this.validKecamatan){
+
+      let input = JSON.stringify({
+        name:this.name,
+        kategori:this.kategori,
+        lembaga_barang:this.lembaga_barang,
+        provinsi:this.provinsi,
+        kota:this.kota,
+        kecamatan:this.kecamatan,
+        address:this.address,
+        description:this.description,
+        });
+
+      this.firedata.list('/barang/'+ this.id_donatur).push({ 
+        nama: this.name,
+        kategori: this.kategori,
+        lembaga_barang: this.lembaga_barang,
+        provinsi: this.provinsi,
+        kota: this.kota,
+        kecamatan: this.kecamatan,
+        address: this.address,
+        description: this.description
+      });
+
+      loading.present();
+
+      // untuk push page dengan tabs dihide
+      this.app.getRootNav().push(DonaturBarangPage, input);
+
+      loading.dismiss();
+
+    }
+    else{
+
+      let alert = this.alertCtrl.create({
+                title: 'Lengkapi Data',
+                // subTitle: 'Email atau Password salah',      
+                buttons: ['OK']
+              });
+              // this.vibration.vibrate(1000);
+              alert.present();
+
+    }
+
   }
+  // OpenItemBarang() {
+  //   // untuk push page dengan tabs dihide
+  //   this.app.getRootNav().push(DonaturBarangPage);
+  // }
+
+  cekKategori() {
+    this.validKategori = true;
+  }
+
+  cekLembagaBarang(){
+
+    this.validLembagaBarang = true;
+ 
+ }
+
+ cekProvinsi() {
+   this.validProvinsi = true;
+ }
+
+ cekKota(){
+   this.validKota = true;
+ }
+
+ cekKecamatan(){
+   this.validKecamatan = true;
+ }
+
+  
 
 
 }

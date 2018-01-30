@@ -55,12 +55,17 @@ export class DonaturProfilEditPage {
     })
   }
 
-  simpanProfil(){
+  simpanProfil(form: NgForm){
 
     let loading = this.loadCtrl.create({
         content: 'memuat..'
     });
+
+    if(form.valid){
+
     loading.present();
+
+    
 
     var user = this.fireauth.auth.currentUser;          
     this.firedata.object('/donatur/'+user.uid).update({
@@ -71,15 +76,26 @@ export class DonaturProfilEditPage {
     });
     
     
-        this.firedata.object('/donatur/'+user.uid).subscribe(data =>{
-          console.log(data);
-          this.data.login(data,"donatur");//ke lokal
-      });
+    this.firedata.object('/donatur/'+user.uid).subscribe(data =>{
+      console.log(data);
+      this.data.login(data,"donatur");//ke lokal
+    });
 
     setTimeout(() => {
       loading.dismiss();
       this.navCtrl.setRoot(TabsDonaturPage, 4);
     }, 1000);
+
+  }
+  
+  else{
+    let alert = this.alertCtrl.create({
+                  title: 'Lengkapi Data',      
+                  buttons: ['OK']
+                });
+                // this.vibration.vibrate(1000);
+                alert.present();
+  }
     
     
     // this.navCtrl.push(DonaturProfilPage);

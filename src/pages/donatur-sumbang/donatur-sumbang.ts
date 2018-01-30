@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, AlertController, App, ModalController, Platform, ViewController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, AlertController, App, ModalController, Platform, ViewController, ActionSheetController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 // import { ModalPage } from './modal-page';
+
+import { Camera, CameraOptions } from '@ionic-native/camera';
 
 import { DonaturUangPage } from '../donatur-uang/donatur-uang';
 import { DonaturBarangPage } from '../donatur-barang/donatur-barang';
@@ -19,6 +21,14 @@ import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/databa
 })
 
 export class DonaturSumbangPage {
+
+  image1: string;
+  image2: string;
+  image3: string;
+  validPhoto= false;
+  gambar1= true;
+  gambar2= true;
+
   swipe: number = 1;
   sumbang: string = "barang";
 
@@ -26,14 +36,22 @@ export class DonaturSumbangPage {
 
   validLembagaBarang = false;
   validKategori = false;
-  validProvinsi = false;
-  validKota = false;
-  validKecamatan = false;
+  // validProvinsi = false;
+  // validKota = false;
+  // validKecamatan = false;
+
+  validProvinsi = true;
+  validKota = true;
+  validKecamatan = true;
 
   choose_lembaga = false;
   submitted = false;
 
   id_donatur: string;
+  nama_lembaga: string
+  lembaga: any;
+  nama_donatur: string;
+  telephone: string;
 
   //uang
   donation: number;  
@@ -48,6 +66,8 @@ export class DonaturSumbangPage {
   kecamatan: string;
   address: string;
   description: string;
+  bank:string;
+  norek:string;
   
   constructor(
     private fireauth: AngularFireAuth,
@@ -60,9 +80,18 @@ export class DonaturSumbangPage {
     public data: Data,
     public loadCtrl: LoadingController,
     public app: App,
-    public modalCtrl: ModalController) {
+    public modalCtrl: ModalController,
+    private camera: Camera,
+    public actionSheetCtrl: ActionSheetController) {
+
+      this.firedata.list('lembaga').subscribe(data => {
+        console.log(data);        
+        this.lembaga=data;//ngambil data yang dikasih firebase
+      });
 
       this.data.getDataDonatur().then((data) => {
+      this.nama_donatur = data.name;
+      this.telephone = data.telephone;
       this.id_donatur = data.id;
     })
 
@@ -73,21 +102,21 @@ export class DonaturSumbangPage {
     
   }
   tapEvent1(e) {
-    console.log("11111111");
-    console.log(this.swipe);
-    console.log(this.sumbang);
+    // console.log("11111111");
+    // console.log(this.swipe);
+    // console.log(this.sumbang);
     this.swipe = 2;
   }
 
   tapEvent2(e) {
-    console.log("222222222");
-    console.log(this.swipe);
-    console.log(this.sumbang);
+    // console.log("222222222");
+    // console.log(this.swipe);
+    // console.log(this.sumbang);
     this.swipe = 1;
   }
 
   swipeEvent(e) {
-    console.log(this.swipe);
+    // console.log(this.swipe);
     this.swipe++
     if(this.swipe%2 == 0){
       this.sumbang = "uang";
@@ -116,6 +145,9 @@ export class DonaturSumbangPage {
 
   OpenItemUang(form: NgForm) {
 
+    
+    
+
     this.submitted = true;
 
     let loading = this.loadCtrl.create({
@@ -124,20 +156,49 @@ export class DonaturSumbangPage {
 
     if(form.valid && this.validLembagaUang){
 
-      let input = JSON.stringify({
-        donation:this.donation,
-        lembaga_uang:this.lembaga_uang,
-        });
-
-      this.firedata.list('/uang/'+ this.id_donatur).push({ 
-        donation: this.donation, 
-        lembaga_uang: this.lembaga_uang 
+      console.log(this.lembaga_uang);
+      //mendapatkan nama_lembaga dari id_lembaga
+      this.firedata.object('/lembaga/'+this.lembaga_uang).subscribe(lembaga => {
+        this.nama_lembaga = lembaga.name;
+        this.bank = lembaga.bank;
+        this.norek = lembaga.norek;
       });
-        
+      console.log(this.nama_lembaga);
+      this.firedata.list('/uang/').push({ 
+        nama_donatur: this.nama_donatur,
+        telephone: this.telephone,
+        id_donatur: this.id_donatur,
+        donation: this.donation, 
+        lembaga_uang: this.lembaga_uang,
+        //nama_lembaga: this.nama_lembaga,
+        notifikasi: 1, //tertunda
+        keterangan: "Unggah Bukti Bayar"
+      })
+      .then(data => {
+        //console.log(data.path);
+        let input = JSON.stringify({
+          id_donatur: this.id_donatur,
+          donation:this.donation,
+          lembaga_uang:this.lembaga_uang,
+          nama_lembaga:this.nama_lembaga,
+          norek:this.norek,
+          bank:this.bank,
+          id_uang: data.path.pieces_[1]
+          });
+          this.app.getRootNav().push(DonaturUangPage, input);
+          
+      })
+ 
+      // let input = JSON.stringify({
+      //       donation:this.donation,
+      //       lembaga_uang:this.lembaga_uang,
+      //       nama_lembaga:this.nama_lembaga,
+      //       //id_uang: data.path.pieces_[2]
+      //   });
+      // this.app.getRootNav().push(DonaturUangPage, input);
       loading.present();
 
       // untuk push page dengan tabs dihide
-      this.app.getRootNav().push(DonaturUangPage, input);
 
       loading.dismiss();
 
@@ -159,6 +220,12 @@ export class DonaturSumbangPage {
 
   OpenItemBarang(form: NgForm) {
 
+    //mendapatkan nama_lembaga dari id_lembaga
+    this.firedata.object('/lembaga/'+this.lembaga_barang).subscribe(lembaga => {
+      this.nama_lembaga = lembaga.name;
+    });
+    console.log(this.nama_lembaga);
+
     this.submitted = true;
 
     let loading = this.loadCtrl.create({
@@ -168,26 +235,21 @@ export class DonaturSumbangPage {
     if(form.valid && this.validKategori && this.validLembagaBarang && this.validProvinsi && this.validKota && this.validKecamatan){
 
       let input = JSON.stringify({
+        telephone:this.telephone,
+        nama_donatur: this.nama_donatur,
         name:this.name,
         kategori:this.kategori,
         lembaga_barang:this.lembaga_barang,
-        provinsi:this.provinsi,
-        kota:this.kota,
-        kecamatan:this.kecamatan,
+        // provinsi:this.provinsi,
+        // kota:this.kota,
+        // kecamatan:this.kecamatan,
         address:this.address,
         description:this.description,
+        image1:this.image1,
+        image2:this.image2,
+        image3:this.image3,
         });
 
-      this.firedata.list('/barang/'+ this.id_donatur).push({ 
-        nama: this.name,
-        kategori: this.kategori,
-        lembaga_barang: this.lembaga_barang,
-        provinsi: this.provinsi,
-        kota: this.kota,
-        kecamatan: this.kecamatan,
-        address: this.address,
-        description: this.description
-      });
 
       loading.present();
 
@@ -236,6 +298,204 @@ export class DonaturSumbangPage {
  cekKecamatan(){
    this.validKecamatan = true;
  }
+
+
+
+ updatePicture1() {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Pilihan',
+      buttons: [
+        {
+          text: 'Ambil Gambar Baru',
+          role: 'ambilGambar',
+          handler: () => {
+            this.takePicture1();
+          }
+        },
+        {
+          text: 'Pilih Dari Galleri',
+          role: 'gallery',
+          handler: () => {
+            this.getPhotoFromGallery1();
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+  }
+
+  async takePicture1(){
+    try {
+      const options : CameraOptions = {
+        quality: 50, //to reduce img size
+        targetHeight: 600,
+        targetWidth: 600,
+        destinationType: this.camera.DestinationType.DATA_URL, //to make it base64 image
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType:this.camera.MediaType.PICTURE,
+        correctOrientation: true
+      }
+
+      const result1 =  await this.camera.getPicture(options);
+
+      this.image1 = 'data:image/jpeg;base64,' + result1;
+
+      this.validPhoto=true;
+      this.gambar1=false;
+
+    }
+    catch (e) {
+      console.error(e);
+      alert("error");
+    }
+
+  }
+
+  getPhotoFromGallery1(){
+    this.camera.getPicture({
+        destinationType: this.camera.DestinationType.DATA_URL,
+        sourceType     : this.camera.PictureSourceType.PHOTOLIBRARY,
+        targetWidth: 600,
+        targetHeight: 600
+    }).then((imageData) => {
+      // this.base64Image = imageData;
+      // this.uploadFoto();
+      this.image1 = 'data:image/jpeg;base64,' + imageData;
+      this.validPhoto=true;
+      this.gambar1=false;
+      }, (err) => {
+    });
+  }
+
+  updatePicture2() {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Pilihan',
+      buttons: [
+        {
+          text: 'Ambil Gambar Baru',
+          role: 'ambilGambar',
+          handler: () => {
+            this.takePicture2();
+          }
+        },
+        {
+          text: 'Pilih Dari Galleri',
+          role: 'gallery',
+          handler: () => {
+            this.getPhotoFromGallery2();
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+  }
+
+  async takePicture2(){
+    try {
+      const options : CameraOptions = {
+        quality: 50, //to reduce img size
+        targetHeight: 600,
+        targetWidth: 600,
+        destinationType: this.camera.DestinationType.DATA_URL, //to make it base64 image
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType:this.camera.MediaType.PICTURE,
+        correctOrientation: true
+      }
+
+      const result2 =  await this.camera.getPicture(options);
+
+      this.image2 = 'data:image/jpeg;base64,' + result2;
+
+      this.validPhoto=true;
+      this.gambar2=false;
+
+    }
+    catch (e) {
+      console.error(e);
+      alert("error");
+    }
+
+  }
+
+  getPhotoFromGallery2(){
+    this.camera.getPicture({
+        destinationType: this.camera.DestinationType.DATA_URL,
+        sourceType     : this.camera.PictureSourceType.PHOTOLIBRARY,
+        targetWidth: 600,
+        targetHeight: 600
+    }).then((imageData) => {
+      // this.base64Image = imageData;
+      // this.uploadFoto();
+      this.image2 = 'data:image/jpeg;base64,' + imageData;
+      this.validPhoto=true;
+      this.gambar2=false;
+      }, (err) => {
+    });
+  }
+
+  updatePicture3() {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Pilihan',
+      buttons: [
+        {
+          text: 'Ambil Gambar Baru',
+          role: 'ambilGambar',
+          handler: () => {
+            this.takePicture3();
+          }
+        },
+        {
+          text: 'Pilih Dari Galleri',
+          role: 'gallery',
+          handler: () => {
+            this.getPhotoFromGallery3();
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+  }
+
+  async takePicture3(){
+    try {
+      const options : CameraOptions = {
+        quality: 50, //to reduce img size
+        targetHeight: 600,
+        targetWidth: 600,
+        destinationType: this.camera.DestinationType.DATA_URL, //to make it base64 image
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType:this.camera.MediaType.PICTURE,
+        correctOrientation: true
+      }
+
+      const result3 =  await this.camera.getPicture(options);
+
+      this.image3 = 'data:image/jpeg;base64,' + result3;
+
+      this.validPhoto=true;
+
+    }
+    catch (e) {
+      console.error(e);
+      alert("error");
+    }
+
+  }
+
+  getPhotoFromGallery3(){
+    this.camera.getPicture({
+        destinationType: this.camera.DestinationType.DATA_URL,
+        sourceType     : this.camera.PictureSourceType.PHOTOLIBRARY,
+        targetWidth: 600,
+        targetHeight: 600
+    }).then((imageData) => {
+      // this.base64Image = imageData;
+      // this.uploadFoto();
+      this.image3 = 'data:image/jpeg;base64,' + imageData;
+      this.validPhoto=true;
+      }, (err) => {
+    });
+  }
 
   
 

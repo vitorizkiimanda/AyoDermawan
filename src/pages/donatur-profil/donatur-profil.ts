@@ -23,6 +23,7 @@ export class DonaturProfilPage {
 
   tabs: number;
   image: string;
+  photos: string;
 
   id_donatur:string;
   name_donatur: string;
@@ -47,15 +48,17 @@ export class DonaturProfilPage {
     public navParams: NavParams,
     public alertCtrl: AlertController,
     public app: App) {
-
+        
         this.data.getDataDonatur().then((data) => {
         this.name_donatur = data.name;
         this.id_donatur = data.id;
         this.email_donatur = data.email;
         this.telephone_donatur = data.telephone;
         this.address_donatur = data.address;
+        this.image=data.image;
+       // this.ambilGambar();        
       })
-
+      
     }
 
   ionViewDidLoad() {
@@ -65,16 +68,6 @@ export class DonaturProfilPage {
   ionViewWillEnter() {
     //ini ni ngambil value yang di return dari data.ts
    
-  }
-
-  doRefresh(refresher) {
-    console.log('Begin async operation', refresher);
-    this.ionViewWillEnter();
-
-    setTimeout(() => {
-      console.log('Async operation has ended');
-      refresher.complete();
-    }, 2000);
   }
 
   editProfil() {
@@ -174,9 +167,18 @@ export class DonaturProfilPage {
 
       this.image = 'data:image/jpeg;base64,' + result;
 
+      console.log(this.id_donatur);
+      // ini ke storage
       const picture = storage().ref('picture/profileDonatur/'+ this.id_donatur);
       picture.putString(this.image, 'data_url');
+
+      storage().ref().child('picture/profileDonatur/'+ this.id_donatur).getDownloadURL().then(url =>{
+        // ini kedata base
+        this.firedata.object('/donatur/'+ this.id_donatur).update({
+        image: url })
+      })
       
+
 
     }
     catch (e) {
@@ -200,9 +202,21 @@ export class DonaturProfilPage {
       const picture = storage().ref('picture/profileDonatur/'+ this.id_donatur);
       picture.putString(this.image, 'data_url');
       
-            
+      storage().ref().child('picture/profileDonatur/'+ this.id_donatur).getDownloadURL().then(url =>{
+        // ini kedata base
+        this.firedata.object('/donatur/'+ this.id_donatur).update({
+        image: url })
+      })
+
       }, (err) => {
     });
+  }
+
+  ambilGambar() {
+    storage().ref().child('picture/profileDonatur/'+ this.id_donatur).getDownloadURL().then(url =>{
+      this.image=url;
+      console.log(url);
+    })
   }
 
   

@@ -33,14 +33,15 @@
           Jumlah Donasi harus diisi
         </p>
 
-        <ion-item>
+        <ion-item>  <!-- nanti valuenya id dari lembaganya yaa, jangan namanya.. tapi teksnya nama lembaga-->
           <ion-label><p class="Head">Lembaga</p></ion-label>
-          <ion-select [(ngModel)]="lembaga_uang" name="lembaga" (ionChange)="cekLembagaUang()" type="text" [ngModelOptions]="{standalone: true}" class="Head2">
-            <ion-option value="Lembaga1">Lembaga1</ion-option>
+          <ion-select [(ngModel)]="lembaga_uang" name="lembaga_uang" (ionChange)="cekLembagaUang()" type="text" [ngModelOptions]="{standalone: true}" class="Head2">
+            <ion-option *ngFor="let data of lembaga" [value]="data.id">{{data.name}}</ion-option>
+            <!--<ion-option value="LFa28pnhlmfqpRMP8IMyTeHaIwB3">pilih yg ini lembaganya</ion-option>
             <ion-option value="Lembaga2">Lembaga2</ion-option>
             <ion-option value="Lembaga3">Lembaga3</ion-option>
             <ion-option value="Lembaga4">Lembaga4</ion-option>
-            <ion-option value="Lembaga5">Lembaga5</ion-option>
+            <ion-option value="Lembaga5">Lembaga5</ion-option>-->
           </ion-select>
         </ion-item>
 
@@ -53,7 +54,7 @@
         </ion-item>
 
       </form>
-
+      <button class="ButtonIllution" clear ion-button block></button>
     </ion-list>
 
     <ion-list *ngSwitchCase="'barang'">
@@ -88,14 +89,15 @@
           Pilih satu
         </p>
 
-        <ion-item>
+        <ion-item>  <!-- nanti valuenya id dari lembaganya yaa, jangan namanya.. tapi teksnya nama lembaga-->
           <ion-label><p class="Head">Lembaga</p></ion-label>
           <ion-select [(ngModel)]="lembaga_barang" name="lembaga_barang" (ionChange)="cekLembagaBarang()" type="text" [ngModelOptions]="{standalone: true}" class="Head2">
-            <ion-option value="Lembaga1">Lembaga1</ion-option>
+            <ion-option *ngFor="let data of lembaga" [value]="data.id">{{data.name}}</ion-option>
+            <!--<ion-option value="LFa28pnhlmfqpRMP8IMyTeHaIwB3">pilih yg ini lembaganya</ion-option>
             <ion-option value="Lembaga2">Lembaga2</ion-option>
             <ion-option value="Lembaga3">Lembaga3</ion-option>
             <ion-option value="Lembaga4">Lembaga4</ion-option>
-            <ion-option value="Lembaga5">Lembaga5</ion-option>
+            <ion-option value="Lembaga5">Lembaga5</ion-option>-->
           </ion-select>
         </ion-item>
 
@@ -106,7 +108,7 @@
         <ion-item no-lines>
           <ion-label><p class="Head">Alamat Pengambilan</p></ion-label>
         </ion-item>
-        <ion-item>
+        <!--<ion-item>
           <ion-label><p class="Head21">Provinsi</p></ion-label>
           <ion-select [(ngModel)]="provinsi" name="provinsi" (ionChange)="cekProvinsi()" type="text" [ngModelOptions]="{standalone: true}" class="Head2">
             <ion-option value="Provinsi1">Provinsi1</ion-option>
@@ -149,7 +151,7 @@
 
         <p class="Warning" ion-text [hidden]="kecamatan || submitted == false" color="danger" padding-left>
           Pilih satu
-        </p>
+        </p>-->
 
         <ion-item>
         <ion-textarea class="Head3"  [(ngModel)]="address" name="address" type="text" #alamat="ngModel" placeholder="Alamat Pengambilan Barang" required autosize>
@@ -163,24 +165,35 @@
         <ion-item class="Konten1">
           
           <ion-label stacked><p class="Head">Deskripsi Barang</p></ion-label>
-          <ion-textarea class="Head2" [(ngModel)]="description" name="description" type="text" #deskripsi="ngModel" placeholder="Berikan Deskripsi barang yang akan didonasikan" spellcheck="false" autocapitalize="off"
+            <ion-textarea class="Head3" [(ngModel)]="description" name="description" type="text" #deskripsi="ngModel" placeholder="Berikan Deskripsi barang yang akan didonasikan" spellcheck="false" autocapitalize="off"
             autosize text-wrap required>
-          </ion-textarea>
+            </ion-textarea>
         
-
-        <!--<ion-label stack class="Head">Deskripsi Barang</ion-label>
-          <ion-textarea class="Head2"  [(ngModel)]="description" name="description" type="text" #deskripsi="ngModel" required autosize>
-        </ion-textarea>-->
         </ion-item>
-
         <p class="Warning" ion-text [hidden]="deskripsi.valid || submitted == false" color="danger" padding-left>
           Deskripsi barang harus diisi
         </p>
 
-        <ion-item no-lines>
-          <button class='Button' color="AyoDermawan" ion-button outline block (click)='UploadFoto()'><p class="ButtonWordBlue">Unggah Foto</p></button>
+        <div>
+          <button [hidden]="image1" class='Button' color="AyoDermawan" ion-button outline block (click)='updatePicture1()'><p class="ButtonWordBlue">Unggah Foto</p></button>
+          
+          <p class="Warning" ion-text [hidden]="image1 || submitted == false" color="danger" padding-left>
+          Unggah foto barang yang akan di sumbangkan
+          </p>
+          
+            <img [src]="image1" *ngIf="image1" class="Pict" (click)="updatePicture1()"/>
+          
+          <button [hidden]="gambar1 || image2" class='Button' color="AyoDermawan" ion-button outline block (click)='updatePicture2()'><p class="ButtonWordBlue">Unggah Foto Lagi</p></button>
+          
+            <img [src]="image2" *ngIf="image2" class="Pict" (click)="updatePicture2()"/>
+
+          <button [hidden]="gambar2 || image3" class='Button' color="AyoDermawan" ion-button outline block (click)='updatePicture3()'><p class="ButtonWordBlue">Unggah Foto Lagi</p></button>
+
+            <img [src]="image3" *ngIf="image3" class="Pict" (click)="updatePicture3()"/>
+        
           <button class='Button' color="AyoDermawan" ion-button block (click)='OpenItemBarang(barangForm)'><p class="ButtonWord">Lanjut</p></button>
-        </ion-item>
+        
+        </div>
 
       </form>
 
